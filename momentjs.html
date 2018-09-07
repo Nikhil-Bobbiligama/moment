@@ -1,0 +1,528 @@
+<html>
+
+<head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    <script>
+        var global_moment_date, global_moment_date_format, global_function2_return, ampm, AMPM;
+        var days = new Array("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday");
+        var day_values = { Sunday: "0", Monday: "1", Tuesday: "2", Wednesday: "3", Thursday: "4", Friday: "5", Saturday: "6" };
+        var today = new Date();
+        var months = new Array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+        month_number = today.getMonth();
+        var user_year = 2000, user_month = 0, user_date = 1;
+        var hrs = today.getHours();
+        if (today.getHours() > 11) {
+            if (today.getHours() == 12) {
+                AMPM = "PM";
+                ampm = "pm";
+            }
+            else {
+                hrs = today.getHours() - 12;
+                ampm = "pm";
+                AMPM = "PM";
+            }
+        }
+        else {
+            ampm = "am";
+            AMPM = "AM"
+        }
+        function pareslt(str2) {
+            if (str2 == "LT") {
+                var dumreturn = hrs + ":" + today.getMinutes() + " " + AMPM;
+                return dumreturn;
+            }
+            if (str2 == "LTS") {
+
+                var dumreturn = hrs + ":" + today.getMinutes() + ":" + today.getSeconds() + " " + AMPM;
+                return dumreturn;
+            }
+            if ((str2 == "L") || (str2 == "l")) {
+                var dumday = today.getDate();
+                var dummonth = today.getMonth();
+                dummonth++;
+                if ((dummonth < 10) && (str2 == "L")) { dummonth = "0" + dummonth; }
+                if ((dumday < 10) && (str2 == "L")) { dumday = "0" + dumday; }
+
+                var dumreturn = dummonth + '/' + dumday + '/' + today.getFullYear();
+                return dumreturn;
+            }
+            if ((str2 == "LL") || (str2 == "ll")) {
+                var dummonth = months[month_number];
+                if (str2 == "ll") {
+                    // dummonth=months[month_number];
+                    dummonth = dummonth.substring(0, 3);
+
+                }
+                var dumreturn = dummonth + " " + today.getDate() + ", " + today.getFullYear();
+                return dumreturn;
+            }
+            if ((str2 == "LLL") || (str2 == "lll")) {
+                var dummonth = months[month_number];
+                if (str2 == "lll") {
+                    // dummonth=months[month_number];
+                    dummonth = dummonth.substring(0, 3);
+
+                }
+                var dumreturn = dummonth + " " + today.getDate() + ", " + today.getFullYear() + " " + hrs + ":" + today.getMinutes() + " " + AMPM;
+                return dumreturn;
+            }
+            if ((str2 == "LLLL") || (str2 == "llll")) {
+                var dummonth = months[month_number];
+                var dumday = days[today.getDay()];
+                if (str2 == "llll") {
+                    // dummonth=months[month_number];
+                    dummonth = dummonth.substring(0, 3);
+                    dumday = dumday.substring(0, 3);
+
+                }
+                var dumreturn = dumday + ", " + dummonth + " " + today.getDate() + ", " + today.getFullYear() + " " + hrs + ":" + today.getMinutes() + " " + AMPM;
+                return dumreturn;
+            }
+
+
+
+
+        }
+        function parse_me(char_type, count, prev) {
+            if (char_type == "M") {
+                if (count == 1) {
+                    return month_number + 1;
+                }
+                if (count == 2) {
+                    var dummonth = month_number + 1;
+                    if ((month_number + 1) < 10) {
+                        dummonth = "0" + (month_number + 1);
+                    }
+                    return dummonth;
+                }
+                if (count == 3) {
+                    return months[month_number].substring(0, 3);
+                }
+                if (count == 4) {
+                    return months[month_number];
+                }
+            }
+            else if (char_type == "A") {
+                return AMPM;
+            }
+            else if (char_type == "D") {
+                if (count == 1) {
+                    var dumdate = today.getDate();
+                    return dumdate;
+                }
+                else {
+                    if (today.getDate() < 10)
+                        return "0" + today.getDate();
+                    else
+                        return " " + today.getDate();
+                }
+            }
+            else if (char_type == "d") {
+                if (count == 1)
+                    return today.getDay();
+                if ((count == 2) || (count == 3))
+                    return days[today.getDay()].substring(0, count);
+                if (count > 3)
+                    return " " + days[today.getDay()];
+            }
+            else if ((char_type == "o") && (prev == "D")) {
+                return "th";
+            }
+            else if (char_type == "Y") {
+                if (count == 2) {
+                    return today.getFullYear() % 100;
+                }
+                else {
+                    return today.getFullYear();
+                }
+            }
+            else if (char_type == "h" || char_type == "H") {
+                var dumhr = today.getHours();
+                if ((dumhr < 10) && (count == 2))
+                    dumhr = "0" + dumhr;
+                return dumhr;
+            }
+            else if (char_type == "m") {
+                var dumhr = today.getMinutes();
+                if ((dumhr < 10) && (count == 2))
+                    dumhr = "0" + dumhr;
+                return dumhr;
+            }
+            else if (char_type == "s") {
+                var dumhr = today.getSeconds();
+                if ((dumhr < 10) && (count == 2))
+                    dumhr = "0" + dumhr;
+                return dumhr;
+            }
+            else if (char_type == "a") {
+                return ampm;
+            }
+            else {
+                return char_type;
+            }
+        }
+        function parse_naming(dir, units, nounits, actual_no_of_units) {
+            var dumminutes = today.getMinutes();
+            if (dumminutes < 10) {
+                dumminutes = "0" + dumminutes;
+            }
+            if (units == "days") {
+                if ((dir == -1) && (actual_no_of_units == 1))
+                    return "Yesterday" + " at " + hrs + ":" + dumminutes + " " + AMPM;
+                else if ((dir == 1) && (actual_no_of_units == 1))
+                    return "Tomorrow at " + hrs + ":" + dumminutes + " " + AMPM;
+                else {
+                    var dumtoday = today.getDay();
+                    dumtoday = dumtoday + nounits;
+                    dumtoday = dumtoday % 7;
+                    var dum_last = "";
+                    if (dir == -1)
+                        dum_last = "Last";
+                    return dum_last + " " + days[dumtoday] + " at " + hrs + ":" + dumminutes + " " + AMPM;
+
+                }
+            }
+            if (units == "hours") {
+                var d = new Date((new Date) * 1 + dir * 1000 * 3600 * actual_no_of_units);
+                var dumday = days[d.getDay()];
+                var dumhours = d.getHours();
+                var dumminutes = d.getMinutes();
+                var dumampm = "AM";
+                if (dumhours > 11) {
+                    dumampm = "PM";
+                    if (dumhours > 12) { dumhours = dumhours - 12; }
+                }
+
+                if (dumhours < 10)
+                    dumhours = "0" + dumhours;
+                if (dumminutes < 10)
+                    dumminutes = "0" + dumminutes;
+                if (today.getDay() == d.getDay()) {
+                    dumday = "Today";
+                }
+                if ((today.getDay() - d.getDay()) == 1)
+                    dumday = "Yesterday";
+
+                if ((d.getDay() - today.getDay()) == 1)
+                    dumday = "Tomorrow";
+
+                return dumday + " at " + dumhours + " : " + dumminutes + " " + dumampm;
+            }
+        }
+        function parse_get_date(dir, no_of_units, units) {
+            if ((units == "days") || (units == "weeks")) {
+                var normaliztion_factor;
+                if (units == "days") {
+                    normaliztion_factor = 1;
+                    hour_factor = 24;
+                }
+                if (units == "weeks") {
+                    normaliztion_factor = 7;
+                    hour_factor = 24;
+                }
+
+
+                var date_process = new Date(new Date().getTime() + (dir * no_of_units * normaliztion_factor * hour_factor * 60 * 60 * 1000));
+                return process(date_process);
+
+            }
+            if (units == "hours") {
+                var d = new Date((new Date) * 1 + dir * 1000 * 3600 * no_of_units);
+                var dummonth = d.getMonth() + 1;
+                if (dummonth < 10)
+                    dummonth = "0" + dummonth;
+                var dumday = d.getDate();
+                if (dumday < 10)
+                    dummonth = "0" + dummonth;
+                var dumyear = d.getFullYear();
+                return dummonth + "/" + dumday + "/" + dumyear;
+            }
+        }
+        function process(myDate) {
+
+            var dummonth = myDate.getMonth();
+            dummonth = dummonth + 1;
+            var dumday = myDate.getDate();
+            var dumyear = myDate.getFullYear();
+            if (dummonth < 10) { dummonth = "0" + dummonth; }
+            if (dumday < 10) { dumday = "0" + dumday; }
+            var dumreturn = dummonth + '/' + dumday + '/' + dumyear;
+            return dumreturn;
+        }
+        function diff_fromNow(type_name, value_type_name, type_count) {
+            var user_full_date, total_days_month;
+            console.log("inside diff_format function");
+
+            if ((type_name == "Y") || (type_name == "y")) {
+                user_year = value_type_name;
+                if (type_count == 2) {
+                    user_year = 2000 + value_type_name;
+
+                    console.log("for two yy==="+user_year);
+                }
+                
+                console.log(value_type_name);
+
+
+            }
+            if ((type_name == "M")) {
+                if (value_type_name > 12) { return "invalid date from MMMM"; }
+                else {
+                    user_month = value_type_name;
+                    total_days_month = new Date(user_year, user_month, 0).getDate();
+                    console.log("total days in month " + total_days_month + " " + months[user_month - 1]);
+                }
+            }
+
+            if ((type_name == "D")) {
+                console.log("total days in month ===" + new Date(user_year, user_month, 0).getDate());
+                if (value_type_name <= new Date(user_year, user_month, 0).getDate()) {
+                    user_date = value_type_name;
+                    // console.log("entered days===="+user_date);
+                }
+                else {
+                    console.log("entered days====" + value_type_name);
+                    return "invalid date from DDDD";
+                    //console.log("Invalid no of days");
+                }
+            }
+            //    var user_full_date =new Date(user_year, (user_month-1), user_date);
+            user_full_date = new Date(user_year, user_month - 1, user_date);
+
+            if (today.getFullYear() == user_full_date.getFullYear()) {
+
+            }
+            console.log("-->" + user_full_date.getDay());
+            console.log(user_full_date.getFullYear() + " " + months[user_full_date.getMonth()] + "  " + days[user_full_date.getDay()]);
+            return user_full_date;
+        }
+        moment = function (moment_date, moment_date_format) {
+            global_moment_date = moment_date;
+            global_moment_date_format = moment_date_format;
+            return s2;
+        }
+        var s2 = {
+            format: function (format_date, format_time) {
+                s = format_date;
+
+                var str2 = s;
+                var i;
+                var res = s.split("");
+                if (res[0] == "l" || res[0] == "L") {
+                    ///////////////////////////////////////
+                    var lt_return = pareslt(s);
+                    return lt_return;
+                }
+
+                else {
+                    var n = res.length;
+                    count = 0;
+                    var dumreturn = "";
+                    for (i = 0; i < n; i++) {
+                        if (res[i] == res[i + 1]) {
+                            count = count + 1;
+                        }
+                        else {
+                            var j = i;
+                            if (res[j] == "[") {
+                                while (res[j + 1] != "]") {
+                                    dumreturn = dumreturn + res[j + 1];
+                                    j++;
+                                }
+                                i = j + 2;
+                            }
+                            dumreturn = dumreturn + parse_me(res[i], count + 1, res[i - 1]);
+                            count = 0;
+                        }
+                    }
+                    return dumreturn.trimRight();
+                }
+            },
+            /////////////////////////////////////////////
+            fromNow: function () {
+                var moment_date = global_moment_date, user_full_date,temp_user_full_date;
+                var moment_date_format = global_moment_date_format;
+                var moment_date_format_res = moment_date_format.split("");
+                var arr = moment_date.split("");
+                var moment_date_res = arr.map(Number);
+
+                var local_count = 0, date_res_value = 0, count = 1;
+
+                for (i = 0; i < moment_date_format.length; i++) {
+                    if (moment_date_format_res[i] == moment_date_format_res[i + 1]) {
+                        count = count + 1;
+                        date_res_value = date_res_value * 10 + moment_date_res[i + local_count];
+                        //  console.log("this is similar count==" + count + " " + moment_date_format[i]);
+
+                        // console.log("this is processing value" + date_res_value + "  -------> step values" + moment_date_res[i + local_count]);
+
+                    }
+                    else {
+                        // console.log(moment_date_format_res[i] + "," + moment_date_res[i + local_count]);
+                        if (count == 1) {
+                            var dem = new Array(50);
+                            if ((i + local_count + 1) > moment_date_res.length) {
+                                dem[local_count] = moment_date_res[i + local_count];
+                                local_count++;
+                                // console.log("exced limits" + " " + (i + local_count + 1));
+                                //  console.log("exced limits of response date" + " " + moment_date_format_res.length);
+                                //  console.log("---------!>" + moment_date_format_res[i] + "," + dem[local_count]);
+
+                            }
+                            else {
+                                dem[local_count] = moment_date_res[i + local_count] * 10 + moment_date_res[i + local_count + 1];
+                                console.log(moment_date_format_res[i] + "," + dem[local_count] + "," + count);
+                                user_full_date = diff_fromNow(moment_date_format_res[i], dem[local_count], count);
+                                local_count++;
+                            }
+                        }
+                        else {
+                            var dem2;
+                            dem2 = date_res_value * 10 + moment_date_res[i + local_count];
+                            console.log(moment_date_format_res[i] + "," + dem2 + "," + count);
+                            user_full_date = diff_fromNow(moment_date_format_res[i], dem2, count);
+
+                        }
+                        date_res_value = 0;
+                        count = 1;
+                    }
+                }
+                //console.log(moment_date_format_res[i]);
+                console.log(user_full_date);
+                temp_user_full_date= user_full_date;
+                if(temp_user_full_date.getFullYear()<today.getFullYear())
+                {   console.log("111");
+                    if(today.getFullYear()-temp_user_full_date.getFullYear()==1)
+                    {    console.log("22222");
+                        if(today.getMonth()>=temp_user_full_date.getMonth())
+                        {   console.log("333333");
+                            return "A year ago";
+                        }
+                        else{
+                            console.log("44444");
+                            return (12-( temp_user_full_date.getMonth()-today.getMonth()))+" Months ago";
+                        }
+                    }
+                    else
+                    {console.log("555");
+                    return today.getFullYear()-temp_user_full_date.getFullYear()+" years ago";
+                }}
+               
+            },
+            startOf: function (startOf_units) {
+                var tempdays = new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+
+                if (startOf_units == "day")
+                    global_function2_return = today.getHours() + " hours ago";
+                else if (startOf_units == "hour" || startOf_units == "Hour")
+                    global_function2_return = today.getMinutes() + " minutes ago";
+                else if (startOf_units == "month")
+                    global_function2_return = today.getDate() + " Days ago";
+
+                else if (startOf_units == "week")
+                    global_function2_return = today.getDay() + " Days ago";
+                else if (startOf_units == "year")
+                    global_function2_return = today.getMonth() + " months ago";
+                else
+                    global_function2_return = "few seconds ago";
+                return s3;
+            },
+            endOf: function (endOf_units) {
+                var total_days_month = new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+
+                if (endOf_units == "day") { global_function2_return = "in " + (24 - today.getHours()) + " hours"; }
+                else if (endOf_units == "hour" || endOf_units == "Hour") {
+                    global_function2_return = "in " + (60 - today.getMinutes()) + " minutes";
+                }
+                else if (endOf_units == "month") {
+                    global_function2_return = "in " + (total_days_month - today.getDate()) + " Days";
+                }
+                else if (endOf_units == "week") {
+                    global_function2_return = "in " + (6 - today.getDay()) + " Days";
+                } else if (endOf_units == "year") {
+                    global_function2_return = "in " + (12 - today.getMonth()) + " months";
+                } else
+                    global_function2_return = "in a few seconds";
+                return s3;
+            },
+            subtract: function (no_of_units, units) {
+                var subdate;
+
+                if (((no_of_units < 7) && (units == "days")) || ((no_of_units < 161) && (units == "hours"))) {
+                    var original_no_of_units = no_of_units;
+                    if (units == "days") {
+                        no_of_units = 7 - no_of_units;
+                    }
+                    var dumday = parse_naming(-1, units, no_of_units, original_no_of_units);
+
+                    var dumminutes = today.getMinutes();
+                    if (dumminutes < 10) {
+                        dumminutes = "0" + dumminutes;
+                    }
+                    global_function2_return = dumday;
+                    return s3;
+                }
+                else {
+                    subdate = parse_get_date(-1, no_of_units, units);
+                    global_function2_return = subdate;
+                    return s3;
+                }
+
+
+
+            },
+
+            add: function (no_of_units, units) {
+                var subdate;
+
+                if (((no_of_units < 7) && (units == "days")) || ((no_of_units < 161) && (units == "hours"))) {
+                    var original_no_of_units = no_of_units;
+                    if (units == "days") {
+
+                    }
+                    var dumday = parse_naming(1, units, no_of_units, original_no_of_units);
+                    var dumminutes = today.getMinutes();
+                    if (dumminutes < 10) {
+                        dumminutes = "0" + dumminutes;
+                    }
+                    global_function2_return = dumday;
+                    return s3;
+                }
+                else {
+                    subdate = parse_get_date(1, no_of_units, units);
+                    global_function2_return = subdate;
+                    return s3;
+                }
+
+
+            },
+            calendar: function () {
+                var dumminutes = today.getMinutes();
+                if (dumminutes < 10) {
+                    dumminutes = "0" + dumminutes;
+                }
+                var dumreturn = "Today at " + hrs + ":" + dumminutes + " " + AMPM;
+
+
+                return dumreturn;
+            },
+            locale: function () {
+                return "en";
+            }
+        }
+        var s3 = {
+            calendar: function () {
+                return global_function2_return;
+
+            },
+            fromNow: function () { return global_function2_return; }
+        }
+
+
+
+
+    </script>
+</head>
+
+</html>
