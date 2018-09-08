@@ -4,13 +4,13 @@
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
     <meta content="utf-8" http-equiv="encoding">
     <script>
-        var global_moment_date, global_moment_date_format, global_function2_return, ampm, AMPM;
+        var global_moment_date, global_moment_date_format, global_function2_return, ampm, AMPM, return_month_response, return_day_response;
         var days = new Array("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday");
         var day_values = { Sunday: "0", Monday: "1", Tuesday: "2", Wednesday: "3", Thursday: "4", Friday: "5", Saturday: "6" };
         var today = new Date();
         var months = new Array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
         month_number = today.getMonth();
-        var user_year = 2000, user_month = 0, user_date = 1;
+        var user_year = 2018, user_month = 1, user_date = 1, user_hour = 0, user_minute = 0, user_second = 0;
         var hrs = today.getHours();
         if (today.getHours() > 11) {
             if (today.getHours() == 12) {
@@ -85,75 +85,156 @@
 
         }
         function parse_me(char_type, count, prev) {
+            var max_count={
+                M: 4,
+                Y:4,
+                h:2,
+                m:2,
+                s:2,
+                D:2,
+                d:4,
+                a:1
+            };
+            var temp_count=count,local_temp_month="";
             if (char_type == "M") {
-                if (count == 1) {
-                    return month_number + 1;
+                 temp_count= parseInt(count/max_count.M, 10);
+                 temp_count_percent= count%max_count.M;
+                 for(i=0;i<temp_count;i++)
+                 {
+                     local_temp_month=local_temp_month+months[month_number];
+                 }
+                 console.log("-------->.>>>>>>>>>>>>>>>"+max_count.M,temp_count,temp_count_percent);
+                if (temp_count_percent == 1) {
+                    return local_temp_month+(month_number + 1);
                 }
-                if (count == 2) {
+                if (temp_count_percent == 2) {
                     var dummonth = month_number + 1;
                     if ((month_number + 1) < 10) {
                         dummonth = "0" + (month_number + 1);
                     }
-                    return dummonth;
+                    return local_temp_month+dummonth;
                 }
-                if (count == 3) {
-                    return months[month_number].substring(0, 3);
+                if (temp_count_percent == 3) {
+                    return local_temp_month+months[month_number].substring(0, 3);
                 }
-                if (count == 4) {
-                    return months[month_number];
+                if (temp_count_percent == 0) {
+                    return local_temp_month;
                 }
+                
             }
             else if (char_type == "A") {
                 return AMPM;
             }
             else if (char_type == "D") {
-                if (count == 1) {
-                    var dumdate = today.getDate();
-                    return dumdate;
-                }
-                else {
+                var dumdate="";
+                temp_count= parseInt(count/max_count.D, 10);
+                 temp_count_percent= count%max_count.D;
+                 console.log("-------->.>>>>>>>>>>>>>>>"+max_count.D,temp_count,temp_count_percent,count);
+                 for(i=0;i<temp_count;i++)
+                 {  
                     if (today.getDate() < 10)
-                        return "0" + today.getDate();
+                    local_temp_month=local_temp_month+"0" + today.getDate();
                     else
-                        return " " + today.getDate();
+                    local_temp_month=local_temp_month+" " + today.getDate();
+                     
+                 }
+                if (temp_count_percent == 1) {
+                     dumdate = today.getDate();
+                   
                 }
+               
+                console.log("meeeeeeeeeeeeee"+local_temp_month+dumdate);
+                return local_temp_month+dumdate;
             }
             else if (char_type == "d") {
-                if (count == 1)
-                    return today.getDay();
-                if ((count == 2) || (count == 3))
-                    return days[today.getDay()].substring(0, count);
-                if (count > 3)
-                    return " " + days[today.getDay()];
+                temp_count= parseInt(count/max_count.d, 10);
+                 temp_count_percent= count%max_count.d;
+                 console.log("dddddddddddddddddddddddd"+max_count.d,temp_count,temp_count_percent,count);
+                 for(i=0;i<temp_count;i++)
+                 {
+                    local_temp_month=local_temp_month+" " + days[today.getDay()];
+                 }
+                if (temp_count_percent == 1)
+                    return local_temp_month+today.getDay();
+                if ((temp_count_percent == 2) || (temp_count_percent == 3))
+                    return local_temp_month+days[today.getDay()].substring(0, temp_count_percent);
+                    if (temp_count_percent == 0) {
+                    return local_temp_month;
+                }
+               
             }
             else if ((char_type == "o") && (prev == "D")) {
                 return "th";
             }
             else if (char_type == "Y") {
-                if (count == 2) {
-                    return today.getFullYear() % 100;
+                temp_count= parseInt(count/max_count.Y, 10);
+                 temp_count_percent= count%max_count.Y;
+                 console.log("dddddddddddddddddddddddd"+max_count.Y,temp_count,temp_count_percent,count);
+                 for(i=0;i<temp_count;i++)
+                 {
+                    local_temp_month=local_temp_month+" " + today.getFullYear();
+                 }
+                if (temp_count_percent == 2) {
+                    return local_temp_month+today.getFullYear() % 100;
                 }
-                else {
-                    return today.getFullYear();
+                else if(temp_count_percent!=0) {
+                    return local_temp_month+    today.getFullYear();
                 }
+                else if(temp_count_percent==0)
+                {if (temp_count_percent == 0) {
+                    return local_temp_month;
+                }}
             }
-            else if (char_type == "h" || char_type == "H") {
-                var dumhr = today.getHours();
-                if ((dumhr < 10) && (count == 2))
-                    dumhr = "0" + dumhr;
-                return dumhr;
+            else if ((char_type == "h") || (char_type == "H")) {
+                console.log("inside hrs");
+                temp_count= parseInt(count/max_count.h, 10);
+                 temp_count_percent= count%max_count.h;
+                 var dumhr = today.getHours();
+                 if(dumhr>12)
+                {dumhr=dumhr-12;}
+                 console.log("dddddddddddddddddddddddd"+max_count.h,temp_count,temp_count_percent,count);
+                 for(i=0;i<temp_count;i++)
+                 {   if ((dumhr < 10)) 
+                    local_temp_month =local_temp_month+ "0" + dumhr;
+                    else
+                    local_temp_month= local_temp_month+dumhr;
+                 }
+               
+                if(temp_count_percent==1)
+                {return local_temp_month+dumhr;}
+                else             
+                return local_temp_month;
             }
             else if (char_type == "m") {
+                temp_count= parseInt(count/max_count.m, 10);
+                 temp_count_percent= count%max_count.m;
                 var dumhr = today.getMinutes();
-                if ((dumhr < 10) && (count == 2))
-                    dumhr = "0" + dumhr;
-                return dumhr;
+                for(i=0;i<temp_count;i++)
+                 {   if ((dumhr < 10)) 
+                    local_temp_month =local_temp_month+ "0" + dumhr;
+                    else
+                    local_temp_month= local_temp_month+dumhr;
+                 }
+                 if(temp_count_percent==1)
+                {return local_temp_month+dumhr;}
+                else             
+                return local_temp_month;
             }
             else if (char_type == "s") {
+                temp_count= parseInt(count/max_count.s, 10);
+                 temp_count_percent= count%max_count.s;
                 var dumhr = today.getSeconds();
-                if ((dumhr < 10) && (count == 2))
-                    dumhr = "0" + dumhr;
-                return dumhr;
+                console.log("secondssssssssssssss"+dumhr);
+                for(i=0;i<temp_count;i++)
+                 {   if ((dumhr < 10)) 
+                    local_temp_month =local_temp_month+ "0" + dumhr;
+                    else
+                    local_temp_month= local_temp_month+dumhr;
+                 }
+                 if(temp_count_percent==1)
+                {return local_temp_month+dumhr;}
+                else             
+                return local_temp_month;
             }
             else if (char_type == "a") {
                 return ampm;
@@ -255,26 +336,68 @@
             console.log("inside diff_format function");
 
             if ((type_name == "Y") || (type_name == "y")) {
-                user_year = value_type_name;
-                if (type_count == 2) {
+                if (type_count == 1) {
+                    user_year = value_type_name;
+                    console.log("for  y===" + user_year);
+                }
+
+                else if (type_count == 2) {
                     user_year = 2000 + value_type_name;
 
-                    console.log("for two yy==="+user_year);
+                    console.log("for two yy===" + user_year);
                 }
-                
+                else {
+                    user_year = value_type_name;
+                }
+
+
                 console.log(value_type_name);
 
 
             }
             if ((type_name == "M")) {
-                if (value_type_name > 12) { return "invalid date from MMMM"; }
+                if (value_type_name > 12) {
+                    return_month_response = -1;
+                    return -1;
+                }
                 else {
                     user_month = value_type_name;
                     total_days_month = new Date(user_year, user_month, 0).getDate();
                     console.log("total days in month " + total_days_month + " " + months[user_month - 1]);
                 }
             }
+            if (type_name == "h") {
+                if (value_type_name > 24) {
+                    return_month_response = -1;
+                    return -1;
+                }
+                else {
+                    user_hour = value_type_name;
 
+                    console.log("user hourss" + user_hour);
+                }
+            }
+
+            if (type_name == "m") {
+                if (value_type_name > 60) {
+                    return_month_response = -1;
+                    return -1;
+                }
+                else {
+                    user_minute = value_type_name;
+                    console.log("in minutes " + user_minute);
+                }
+            }
+            if (type_name == "s") {
+                if (value_type_name > 60) {
+                    return_month_response = -1;
+                    return -1;
+                }
+                else {
+                    user_second = value_type_name;
+                    console.log("in users secondsss " + user_second);
+                }
+            }
             if ((type_name == "D")) {
                 console.log("total days in month ===" + new Date(user_year, user_month, 0).getDate());
                 if (value_type_name <= new Date(user_year, user_month, 0).getDate()) {
@@ -283,19 +406,25 @@
                 }
                 else {
                     console.log("entered days====" + value_type_name);
-                    return "invalid date from DDDD";
+                    return_day_response = -1;
+                    return -1;
                     //console.log("Invalid no of days");
                 }
             }
             //    var user_full_date =new Date(user_year, (user_month-1), user_date);
-            user_full_date = new Date(user_year, user_month - 1, user_date);
-
-            if (today.getFullYear() == user_full_date.getFullYear()) {
-
-            }
+            console.log("user entered year ==" + user_year);
+            user_full_date = new Date(user_year, user_month - 1, user_date, user_hour, user_minute, user_second);
+            console.log(user_full_date);
             console.log("-->" + user_full_date.getDay());
             console.log(user_full_date.getFullYear() + " " + months[user_full_date.getMonth()] + "  " + days[user_full_date.getDay()]);
-            return user_full_date;
+            if ((type_count == 1) && (type_name == "Y")) {
+                console.log("type == Y" + "count is" + type_count);
+                return (today.getFullYear() - value_type_name);
+
+            }
+            else {
+                return user_full_date;
+            }
         }
         moment = function (moment_date, moment_date_format) {
             global_moment_date = moment_date;
@@ -322,6 +451,7 @@
                     for (i = 0; i < n; i++) {
                         if (res[i] == res[i + 1]) {
                             count = count + 1;
+                            console.log(res[i]);
                         }
                         else {
                             var j = i;
@@ -332,6 +462,7 @@
                                 }
                                 i = j + 2;
                             }
+                            console.log(res[i],count+1,res[i-1]);
                             dumreturn = dumreturn + parse_me(res[i], count + 1, res[i - 1]);
                             count = 0;
                         }
@@ -341,15 +472,19 @@
             },
             /////////////////////////////////////////////
             fromNow: function () {
-                var moment_date = global_moment_date, user_full_date,temp_user_full_date;
+                var moment_date = global_moment_date, user_full_date = today, temp_user_full_date;
                 var moment_date_format = global_moment_date_format;
                 var moment_date_format_res = moment_date_format.split("");
                 var arr = moment_date.split("");
                 var moment_date_res = arr.map(Number);
-
+                var skip = 1, check_low_year;
                 var local_count = 0, date_res_value = 0, count = 1;
 
                 for (i = 0; i < moment_date_format.length; i++) {
+                    if (skip == 0) {
+                        console.log("skipp==" + skip);
+
+                    }
                     if (moment_date_format_res[i] == moment_date_format_res[i + 1]) {
                         count = count + 1;
                         date_res_value = date_res_value * 10 + moment_date_res[i + local_count];
@@ -365,6 +500,10 @@
                             if ((i + local_count + 1) > moment_date_res.length) {
                                 dem[local_count] = moment_date_res[i + local_count];
                                 local_count++;
+                                if (skip == 0) {
+                                    console.log("skipp==" + skip);
+                                    break;
+                                }
                                 // console.log("exced limits" + " " + (i + local_count + 1));
                                 //  console.log("exced limits of response date" + " " + moment_date_format_res.length);
                                 //  console.log("---------!>" + moment_date_format_res[i] + "," + dem[local_count]);
@@ -373,8 +512,26 @@
                             else {
                                 dem[local_count] = moment_date_res[i + local_count] * 10 + moment_date_res[i + local_count + 1];
                                 console.log(moment_date_format_res[i] + "," + dem[local_count] + "," + count);
-                                user_full_date = diff_fromNow(moment_date_format_res[i], dem[local_count], count);
-                                local_count++;
+                                if (skip == 0) {
+                                    console.log("skipp==" + skip);
+                                    break;
+                                }
+                                if ((moment_date_format_res[i] == "Y") && (count == 1)) {
+                                    skip = 0;
+                                    var s_dem_year = dem[local_count];
+
+                                    console.log("ur year ===" + s_dem_year);
+                                    check_low_year = (today.getFullYear() - s_dem_year) + " Years ago";
+                                    console.log(check_low_year);
+                                    local_count++;
+
+
+
+                                }
+                                else {
+                                    user_full_date = diff_fromNow(moment_date_format_res[i], dem[local_count], count);
+                                    local_count++;
+                                }
                             }
                         }
                         else {
@@ -389,26 +546,112 @@
                     }
                 }
                 //console.log(moment_date_format_res[i]);
-                console.log(user_full_date);
-                temp_user_full_date= user_full_date;
-                if(temp_user_full_date.getFullYear()<today.getFullYear())
-                {   console.log("111");
-                    if(today.getFullYear()-temp_user_full_date.getFullYear()==1)
-                    {    console.log("22222");
-                        if(today.getMonth()>=temp_user_full_date.getMonth())
-                        {   console.log("333333");
-                            return "A year ago";
+                // console.log(user_full_date);
+                temp_user_full_date = user_full_date;
+                console.log("hrs:" + user_full_date.getHours() + "minutes:" + user_full_date.getMinutes() + "seconds:" + user_full_date.getSeconds());
+                if ((return_day_response == -1) || (return_month_response == -1)) {
+                    return_day_response = 0;
+                    return_month_response = 0;
+                    return "Invalid date";
+                }
+                else if (skip == 0) {
+                    return check_low_year;
+                }
+                else {
+                    if (temp_user_full_date.getFullYear() < today.getFullYear()) {
+
+                        console.log("111");
+                        if (today.getFullYear() - temp_user_full_date.getFullYear() == 1) {
+                            console.log("22222");
+                            if (today.getMonth() >= temp_user_full_date.getMonth()) {
+                                console.log("333333");
+                                return "A year ago";
+                            }
+                            else {
+                                console.log("44444");
+                                return (12 - (temp_user_full_date.getMonth() - today.getMonth())) + " Months ago";
+                            }
                         }
-                        else{
-                            console.log("44444");
-                            return (12-( temp_user_full_date.getMonth()-today.getMonth()))+" Months ago";
+                        else {
+                            console.log("555");
+                            console.log(typeof temp_user_full_date);
+
+
+                            return today.getFullYear() - temp_user_full_date.getFullYear() + " years ago";
+
                         }
                     }
-                    else
-                    {console.log("555");
-                    return today.getFullYear()-temp_user_full_date.getFullYear()+" years ago";
-                }}
-               
+                    else if (temp_user_full_date.getFullYear() == today.getFullYear()) {
+                        if (temp_user_full_date.getMonth() < today.getMonth()) {
+                            return today.getMonth() - temp_user_full_date.getMonth() + " months ago";
+                        }
+                        else if (temp_user_full_date.getMonth() == today.getMonth()) {
+                            if (temp_user_full_date.getDate() < today.getDate()) {
+                                return today.getDate() - temp_user_full_date.getDate() + " Days ago";
+                            }
+                            else if (temp_user_full_date.getDate() == today.getDate()) {
+                                if (temp_user_full_date.getHours() < today.getHours()) {
+                                    return (today.getHours() - temp_user_full_date.getHours() + " Hours ago");
+                                }
+                                else if (temp_user_full_date.getHours() == today.getHours()) {
+                                    if (temp_user_full_date.getMinutes() < today.getMinutes()) {
+                                        return (today.getMinutes() - temp_user_full_date.getMinutes() + " Minutes ago");
+                                    }
+                                    else if (temp_user_full_date.getMinutes() > today.getMinutes()) {
+                                        return ("in " + temp_user_full_date.getMinutes() - today.getMinutes() + " Minutes");
+                                    }
+                                    else if (temp_user_full_date.getMinutes() == today.getMinutes()) {
+                                        if (today.getSeconds() > temp_user_full_date.getSeconds()) {
+                                            return "A few seconds ago";
+                                        }
+                                        else {
+                                            return "In few seconds";
+                                        }
+                                    }
+
+                                }
+                                else {
+                                    return ("in " + (temp_user_full_date.getHours() - today.getHours()) + " Hours");
+                                }
+
+                            }
+                            else {
+                                if ((temp_user_full_date.getDate() - today.getDate()) == 1) {
+                                    return ("in " + (24 - today.getHours()) + " Hours");
+                                }
+                                else
+                                    return ("in " + (temp_user_full_date.getDate() - today.getDate()) + " Days");
+                            }
+                        }
+                        else {
+                            return ("in " + (temp_user_full_date.getMonth() - today.getMonth()) + " months");
+                        }
+                    }
+                    else if (temp_user_full_date.getFullYear() > today.getFullYear()) {
+
+                        console.log("111");
+                        if (temp_user_full_date.getFullYear() - today.getFullYear() == 1) {
+                            console.log("22222");
+                            if (temp_user_full_date.getMonth() >= today.getMonth()) {
+                                console.log("333333");
+                                return "In a Year";
+                            }
+                            else {
+                                console.log("44444");
+                                return "in " + ((12 - (today.getMonth()) + today.getMonth())) + " Months";
+                            }
+                        }
+                        else {
+                            console.log("555");
+                            console.log(typeof temp_user_full_date);
+
+
+                            return "in " + (temp_user_full_date.getFullYear() - today.getFullYear()) + " years";
+
+                        }
+                    }
+                }
+
             },
             startOf: function (startOf_units) {
                 var tempdays = new Date(today.getFullYear(), today.getMonth(), 0).getDate();
